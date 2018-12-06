@@ -6,10 +6,29 @@ class Fader extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = {
-      isInDOM: false,
-      isHidden: true,
-    };
+    const { isHidden, isAnimateOnMount } = this.props;
+
+    const initialState = {};
+
+    if(isHidden){
+      if(isAnimateOnMount){
+        initialState.isInDOM = true;
+        initialState.isHidden = false;
+      }else{
+        initialState.isInDOM = false;
+        initialState.isHidden = true;
+      }
+    }else{
+      if(isAnimateOnMount){
+        initialState.isInDOM = false;
+        initialState.isHidden = true;
+      }else{
+        initialState.isInDOM = true;
+        initialState.isHidden = false;
+      }
+    }
+
+    this.state = initialState;
 
     this.childRef = null;
 
@@ -72,7 +91,7 @@ class Fader extends React.PureComponent {
       return;
     }
 
-    if(!this.state.isHidden){
+    if(!isHidden){
       this.setState({ isInDOM: true, isHidden: true });
     }
 
@@ -80,8 +99,14 @@ class Fader extends React.PureComponent {
   };
 
   componentDidMount = () => {
-    if(!this.props.isHidden){
-      this.startFadeInLoop();
+    const { isHidden, isAnimateOnMount } = this.props;
+
+    if(isAnimateOnMount){
+      if(!isHidden){
+        this.startFadeInLoop();
+      }else{
+        this.startFadeOutLoop();
+      }
     }
   };
 
@@ -123,9 +148,11 @@ Fader.propTypes = {
   isHidden: propTypes.bool.isRequired,
   FPS: propTypes.number,
   checkIsHidden: propTypes.func,
+  isAnimateOnMount: propTypes.bool
 };
 
 Fader.defaultProps = {
+  isAnimateOnMount: true,
   FPS: 30,
   checkIsHidden: (computedStyle) => {
     return computedStyle.opacity === '0';
