@@ -2,6 +2,7 @@ import propTypes from 'prop-types';
 import React from 'react';
 
 
+// todo migrate to SnitchV3 and React.createRef
 class Fader extends React.PureComponent {
   constructor(props) {
     super(props);
